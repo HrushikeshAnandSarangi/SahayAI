@@ -1,9 +1,14 @@
+import FeaturesSection from '@/components/FeaturesSection'
+import LandingSection from '@/components/LandingSection'
+import TryItOutSection from '@/components/TryItOut'
 import React from 'react'
 
 export default function page() {
   return (
     <>
-      <h1>Sahay Ai</h1>
+      <LandingSection/>
+      <FeaturesSection/>
+      <TryItOutSection/>
     </>
   )
 }
