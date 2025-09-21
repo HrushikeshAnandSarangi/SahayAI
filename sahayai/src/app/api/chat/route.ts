@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 // Reuse the backend URL environment variable
-const FLASK_API_URL = process.env.FLASK_API_URL || 'http://backend:5000';
+const FLASK_API_URL = process.env.FLASK_API_URL || 'https://sahayai-backend-23401246568.europe-west1.run.app';
 
 export async function POST(request: NextRequest) {
   try {
