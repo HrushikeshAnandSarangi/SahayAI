@@ -1,15 +1,8 @@
 Flask
-
 python-dotenv
-
 google-cloud-vision
 google-generativeai
-
 langchain
-PyMuPDF
+pymupdf
 Pillow
-pytest
-pytest-mock
-Werkzeug
-Flask-Cors
-gunicorn
+gunicorn 
