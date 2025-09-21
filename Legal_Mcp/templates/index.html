@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legal Document Demystifier</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .card { background-color: white; border-radius: 0.5rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); border: 1px solid #e5e7eb; padding: 1.5rem; }
+        .prose-custom ul { list-style-position: inside; }
+        .prose-custom li { margin-bottom: 0.5rem; }
+        .tab { cursor: pointer; padding: 0.75rem 1.5rem; border-bottom: 2px solid transparent; }
+        .tab.active { color: #2563eb; border-bottom-color: #2563eb; }
+        .chat-bubble { max-width: 80%; padding: 0.75rem 1rem; border-radius: 1rem; }
+        .chat-bubble-user { background-color: #2563eb; color: white; border-bottom-right-radius: 0.25rem; align-self: flex-end; }
+        .chat-bubble-ai { background-color: #e5e7eb; color: #1f2937; border-bottom-left-radius: 0.25rem; align-self: flex-start; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-5xl">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-gray-900">Legal Document Demystifier</h1>
+            <p class="text-lg text-gray-600 mt-2">Upload a legal file, select your role, and get a clear, simple analysis.</p>
+        </header>
+
+        <main>
+            <div id="upload-section" class="card">
+                <form id="upload-form">
+                    <div class="mb-6">
+                        <label class="block text-lg font-semibold mb-2 text-gray-700">Step 1: What is your role?</label>
+                        <div class="flex space-x-4">
+                            <label class="flex items-center p-4 border border-gray-300 rounded-lg cursor-pointer flex-1 has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500">
+                                <input type="radio" name="user_role" value="plaintiff" class="h-4 w-4 text-blue-600" required>
+                                <span class="ml-3">Plaintiff / Petitioner</span>
+                            </label>
+                            <label class="flex items-center p-4 border border-gray-300 rounded-lg cursor-pointer flex-1 has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500">
+                                <input type="radio" name="user_role" value="defendant" class="h-4 w-4 text-blue-600" required>
+                                <span class="ml-3">Defendant / Respondent</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-lg font-semibold mb-2 text-gray-700">Step 2: Upload your document</label>
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-10 text-center cursor-pointer hover:border-blue-500 transition-colors" id="drop-zone">
+                            <p id="drop-zone-text" class="text-sm text-gray-600"><span class="font-semibold text-blue-600">Click to upload</span> or drag and drop</p>
+                            <input type="file" id="file-input" class="hidden" accept=".pdf,.png,.jpg,.jpeg">
+                        </div>
+                        <div id="file-name-display" class="mt-4 text-center text-gray-700 font-medium"></div>
+                    </div>
+                    <button type="submit" id="submit-button" class="mt-8 w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 disabled:bg-gray-400" disabled>Analyze Document</button>
+                </form>
+            </div>
+
+            <div id="loading-section" class="hidden mt-8 text-center"><div class="card flex items-center justify-center"><svg class="animate-spin -ml-1 mr-3 h-8 w-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><p class="text-lg font-semibold text-gray-700">Analyzing your document...</p></div></div>
+            <div id="error-section" class="hidden mt-8"><div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg"><strong class="font-bold">An Error Occurred! </strong><span id="error-message"></span></div></div>
+
+            <div id="result-section" class="hidden mt-8">
+                <div class="border-b border-gray-200"><nav class="flex -mb-px" id="tabs">
+                    <button class="tab active" data-target="analysis-content">Analysis</button>
+                    <button class="tab" data-target="assistant-content">AI Assistant</button>
+                    <button class="tab" data-target="text-content">Scraped Text</button>
+                </nav></div>
+                
+                <div id="tab-content" class="mt-6">
+                    <div id="analysis-content">
+                        <!-- Analysis content will be populated by JS -->
+                    </div>
+                    <div id="assistant-content" class="hidden">
+                        <div class="card">
+                            <h2 class="text-2xl font-bold mb-3">Your AI Assistant</h2>
+                            <p id="assistant-greeting" class="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg"></p>
+                            <div id="chat-window" class="h-96 border rounded-lg p-4 overflow-y-auto flex flex-col space-y-4 mb-4 bg-gray-50">
+                                <!-- Chat messages will be appended here -->
+                            </div>
+                            <form id="chat-form" class="flex space-x-2">
+                                <input type="text" id="chat-input" class="flex-1 border-gray-300 rounded-lg p-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Ask a question about your document..." autocomplete="off">
+                                <button type="submit" id="chat-submit" class="bg-blue-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-blue-700 disabled:bg-gray-400">Send</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div id="text-content" class="hidden">
+                        <div class="card">
+                             <h2 class="text-2xl font-bold mb-3">Full Scraped Text</h2>
+                             <textarea id="scraped-text" rows="20" class="w-full p-2 border border-gray-300 rounded-md bg-gray-50" readonly></textarea>
+                        </div>
+                    </div>
+                </div>
+                 <button id="reset-button" class="mt-8 w-full bg-gray-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-gray-700">Analyze Another Document</button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // --- State Management ---
+        let selectedFile = null;
+        let documentContext = '';
+        let userRole = '';
+
+        // --- Element References ---
+        const form = document.getElementById('upload-form');
+        const fileInput = document.getElementById('file-input');
+        const dropZone = document.getElementById('drop-zone');
+        const submitButton = document.getElementById('submit-button');
+        const fileNameDisplay = document.getElementById('file-name-display');
+        const resetButton = document.getElementById('reset-button');
+        const tabs = document.getElementById('tabs');
+        const chatForm = document.getElementById('chat-form');
+        const chatInput = document.getElementById('chat-input');
+        const chatWindow = document.getElementById('chat-window');
+
+        // --- Sections ---
+        const uploadSection = document.getElementById('upload-section');
+        const loadingSection = document.getElementById('loading-section');
+        const resultSection = document.getElementById('result-section');
+        const errorSection = document.getElementById('error-section');
+        const errorMessage = document.getElementById('error-message');
+        
+        // --- Event Listeners ---
+        dropZone.addEventListener('click', () => fileInput.click());
+        dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('border-blue-500', 'bg-blue-50'); });
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('border-blue-500', 'bg-blue-50'));
+        dropZone.addEventListener('drop', e => {
+            e.preventDefault();
+            dropZone.classList.remove('border-blue-500', 'bg-blue-50');
+            if (e.dataTransfer.files.length > 0) handleFileSelect(e.dataTransfer.files[0]);
+        });
+        fileInput.addEventListener('change', e => { if (e.target.files.length > 0) handleFileSelect(e.target.files[0]); });
+        form.addEventListener('submit', handleFormSubmit);
+        resetButton.addEventListener('click', resetUI);
+        tabs.addEventListener('click', handleTabClick);
+        chatForm.addEventListener('submit', handleChatSubmit);
+
+        function checkFormValidity() {
+            const roleSelected = form.querySelector('input[name="user_role"]:checked');
+            submitButton.disabled = !(roleSelected && selectedFile);
+        }
+        form.querySelectorAll('input[name="user_role"]').forEach(radio => radio.addEventListener('change', checkFormValidity));
+
+        function handleFileSelect(file) {
+            selectedFile = file;
+            fileNameDisplay.textContent = `Selected: ${file.name}`;
+            checkFormValidity();
+        }
+
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+            if (submitButton.disabled) return;
+
+            uploadSection.classList.add('hidden');
+            resultSection.classList.add('hidden');
+            errorSection.classList.add('hidden');
+            loadingSection.classList.remove('hidden');
+
+            const formData = new FormData(form);
+            userRole = formData.get('user_role');
+            formData.append('file', selectedFile);
+
+            try {
+                const response = await fetch('/process-document', { method: 'POST', body: formData });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error || `HTTP error! status: ${response.status}`);
+                displayResults(data);
+            } catch (error) {
+                showError(error.message);
+            } finally {
+                loadingSection.classList.add('hidden');
+            }
+        }
+        
+        async function handleChatSubmit(e) {
+            e.preventDefault();
+            const question = chatInput.value.trim();
+            if (!question) return;
+
+            addMessageToChat(question, 'user');
+            chatInput.value = '';
+            chatInput.disabled = true;
+
+            try {
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ question, context: documentContext, user_role: userRole })
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error || 'Failed to get a response.');
+                addMessageToChat(data.answer, 'ai');
+            } catch (error) {
+                addMessageToChat(`Sorry, I encountered an error: ${error.message}`, 'ai');
+            } finally {
+                chatInput.disabled = false;
+                chatInput.focus();
+            }
+        }
+
+        function addMessageToChat(message, sender) {
+            const bubble = document.createElement('div');
+            bubble.className = `chat-bubble chat-bubble-${sender}`;
+            // Basic markdown for quotes
+            message = message.replace(/"(.*?)"/g, '<blockquote class="border-l-4 border-gray-300 pl-2 italic my-1">$1</blockquote>');
+            bubble.innerHTML = message;
+            chatWindow.appendChild(bubble);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        function displayResults(data) {
+            documentContext = data.scraped_text;
+
+            // Analysis Content
+            const analysisContainer = document.getElementById('analysis-content');
+            analysisContainer.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-6">
+                        <div class="card"><h2 class="text-2xl font-bold mb-3">Summary</h2><p class="text-gray-700 leading-relaxed">${data.analysis.summary}</p></div>
+                        <div class="card"><h2 class="text-2xl font-bold mb-3">Key Details</h2><div class="space-y-3">
+                            <p><strong>Confidence Score:</strong> ${(data.key_details.confidence_score * 100).toFixed(1)}%</p>
+                            <p><strong>Document Type:</strong> ${data.key_details.document_type}</p>
+                            <p><strong>Parties Involved:</strong> ${data.key_details.parties_involved.join(', ')}</p>
+                            <p><strong>Effective Period:</strong> ${data.key_details.effective_period}</p>
+                        </div></div>
+                        <div class="card"><h2 class="text-2xl font-bold mb-3">Key Terms</h2><div class="space-y-3">${data.key_details.key_terms.map(item => `<p><strong>${item.term}:</strong> ${item.definition}</p>`).join('')}</div></div>
+                    </div>
+                    <div class="space-y-6">
+                        <div class="card"><h2 class="text-2xl font-bold mb-3">Actionable Checklist</h2><ul class="list-disc pl-5 text-gray-700 prose-custom">${data.actionable_checklist.map(item => `<li>${item}</li>`).join('')}</ul></div>
+                        <div class="card"><h2 class="text-2xl font-bold mb-3">Clause Analysis</h2><div class="space-y-4">${data.analysis.clause_analysis.map(item => `<div class="border-t pt-4"><h4 class="font-semibold">${item.clause_name}</h4><p class="text-sm text-gray-600">${item.explanation}</p>${item.citations.length > 0 ? `<p class="text-xs text-gray-500 mt-1">Citations: ${item.citations.join(', ')}</p>` : ''}</div>`).join('')}</div></div>
+                        <div class="card"><h2 class="text-2xl font-bold mb-3">Citation References</h2><ul class="list-disc pl-5 text-gray-700 prose-custom">${data.analysis.citation_references.map(item => `<li>${item}</li>`).join('')}</ul></div>
+                    </div>
+                </div>
+            `;
+            
+            // Assistant
+            document.getElementById('assistant-greeting').textContent = data.assistant.persona_greeting;
+            addMessageToChat(data.assistant.persona_greeting, 'ai');
+            
+            // Scraped Text
+            document.getElementById('scraped-text').value = data.scraped_text;
+            resultSection.classList.remove('hidden');
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorSection.classList.remove('hidden');
+            uploadSection.classList.remove('hidden');
+        }
+
+        function resetUI() {
+            selectedFile = null;
+            documentContext = '';
+            userRole = '';
+            form.reset();
+            fileNameDisplay.textContent = '';
+            submitButton.disabled = true;
+            chatWindow.innerHTML = '';
+            
+            resultSection.classList.add('hidden');
+            errorSection.classList.add('hidden');
+            loadingSection.classList.add('hidden');
+            uploadSection.classList.remove('hidden');
+            
+            document.querySelector('.tab.active').classList.remove('active');
+            document.querySelector('.tab[data-target="analysis-content"]').classList.add('active');
+            document.getElementById('analysis-content').classList.remove('hidden');
+            document.getElementById('assistant-content').classList.add('hidden');
+            document.getElementById('text-content').classList.add('hidden');
+        }
+
+        function handleTabClick(e) {
+            if (!e.target.classList.contains('tab')) return;
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            e.target.classList.add('active');
+            const targetId = e.target.dataset.target;
+            document.querySelectorAll('#tab-content > div').forEach(content => {
+                content.classList.toggle('hidden', content.id !== targetId);
+            });
+        }
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,15 @@
+Flask
+
+python-dotenv
+
+google-cloud-vision
+google-generativeai
+
+langchain
+PyMuPDF
+Pillow
+pytest
+pytest-mock
+Werkzeug
+Flask-Cors
+gunicorn
