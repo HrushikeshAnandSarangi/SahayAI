@@ -1,38 +1,55 @@
-# This file defines the steps for Google Cloud Build to execute.
+# This file tells Google Cloud Build how to build and push both of your container images
+# from your single GitHub repository.
+
 steps:
-# Step 1: Build the backend Flask image
+# --- Step 1: Build the Backend Image ---
+# This step runs the 'docker build' command.
+# - 'gcr.io/cloud-builders/docker' is the official Docker builder from Google.
+# - The '-t' flag tags the image with its future location in Artifact Registry.
+# - './Legal_Mcp' is the build context (the directory where the Dockerfile is).
 - name: 'gcr.io/cloud-builders/docker'
   args: [
     'build',
     '-t',
     '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO_NAME}/backend:latest',
-    './Legal_Mcp'  # Directory of the backend Dockerfile
+    './Legal_Mcp'
   ]
+  id: 'Build Backend'
 
-# Step 2: Push the backend image to Artifact Registry
+# --- Step 2: Push the Backend Image ---
+# This step pushes the image built in the previous step to Google Artifact Registry.
 - name: 'gcr.io/cloud-builders/docker'
   args: [
     'push',
     '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO_NAME}/backend:latest'
   ]
+  id: 'Push Backend'
 
-# Step 3: Build the frontend Next.js image
+# --- Step 3: Build the Frontend Image ---
+# This is the same process as step 1, but for your Next.js frontend.
+# The build context is './sahayai'.
 - name: 'gcr.io/cloud-builders/docker'
   args: [
     'build',
     '-t',
     '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO_NAME}/frontend:latest',
-    './sahayai'  # Directory of the frontend Dockerfile
+    './sahayai'
   ]
+  id: 'Build Frontend'
 
-# Step 4: Push the frontend image to Artifact Registry
+# --- Step 4: Push the Frontend Image ---
+# This step pushes the frontend image to Artifact Registry.
 - name: 'gcr.io/cloud-builders/docker'
   args: [
     'push',
     '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO_NAME}/frontend:latest'
   ]
+  id: 'Push Frontend'
 
-# This final section makes both images available to Cloud Run after the build completes.
+# --- Final Step: Make Images Available ---
+# This final section lists the images that were built. This makes them easily
+# selectable in the Cloud Run UI when you are setting up your services.
 images:
 - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO_NAME}/backend:latest'
 - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO_NAME}/frontend:latest'
+
