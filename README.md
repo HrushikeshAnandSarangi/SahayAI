@@ -151,9 +151,7 @@ A useful tool for law students or academics who need to analyze and summarize la
 ### 👨‍💻 Developers
 Those looking for a practical, end-to-end example of a modern AI application combining a Python backend with a Next.js frontend, ready for containerized deployment.
 
-## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## 📄 License
 
