@@ -1,8 +1,14 @@
-Flask
-python-dotenv
-google-cloud-vision
-google-generativeai
-langchain
-pymupdf
-Pillow
-gunicorn 
+Flask==3.0.3
+python-dotenv==1.0.1
+google-cloud-vision==3.7.2
+google-generativeai==0.8.2
+langchain==0.2.16
+pymupdf==1.24.10
+Pillow==10.4.0
+gunicorn==23.0.0
+
+# Pin problematic transitive dependencies
+rsa==4.9
+cryptography==43.0.1
+protobuf==4.25.4
+grpcio==1.66.1
