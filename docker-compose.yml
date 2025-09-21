@@ -1,0 +1,47 @@
+# Docker Compose file version
+version: '3.8'
+
+# Define the services (containers) for your application
+services:
+  # The Next.js frontend service
+  frontend:
+    # Build instructions for the frontend image
+    build:
+      # The context is the directory where the source code and Dockerfile are located
+      context: ./sahayai
+      # Specify the Dockerfile to use
+      dockerfile: DockerFile
+    container_name: nextjs_frontend
+    # Map port 3000 on the host to port 3000 in the container
+    ports:
+      - "3000:3000"
+    # Set environment variables for the container
+    environment:
+      # This allows your Next.js app to know the URL of the backend API.
+      # 'backend' is the service name of the Flask API defined below.
+      - NEXT_PUBLIC_API_URL=http://backend:5000
+    # Restart the container automatically unless it's manually stopped
+    restart: unless-stopped
+    # This service depends on the 'backend' service. 
+    # Docker Compose will start the backend before the frontend.
+    depends_on:
+      - backend
+
+  # The Flask backend service
+  backend:
+    # Build instructions for the backend image
+    build:
+      # We assume your backend code is in a subdirectory named 'backend'
+      context: ./Legal_Mcp
+      # The Dockerfile for the backend should be inside the 'backend' directory
+      dockerfile: DockerFile
+    container_name: flask_backend
+    # Map port 8000 on the host to port 8000 in the container
+    ports:
+      - "5000:5000"
+    # Restart the container automatically unless it's manually stopped
+    restart: unless-stopped
+
+# Docker Compose will automatically create a default network for these services
+# allowing them to communicate with each other using their service names.
+

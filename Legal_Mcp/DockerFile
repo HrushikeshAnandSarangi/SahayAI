@@ -14,10 +14,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Expose the port the app runs on
-EXPOSE 8000
+EXPOSE 5000
 
 # Define environment variable for the app to run in production
 ENV FLASK_ENV=production
 
 # The command to run the application using Gunicorn
-CMD ["gunicorn", "--workers", "3", "--bind", "0.0.0.0:8000", "app:app"]
+CMD ["gunicorn", "--workers", "3", "--bind", "0.0.0.0:5000", "app:app"]

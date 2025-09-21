@@ -6,3 +6,4 @@ langchain
 pymupdf
 Pillow
 gunicorn 
+flask-cors
