@@ -63,7 +63,7 @@ export function ChecklistTab() {
         <div className="p-4">
           <div className="flex items-center justify-between">
             <h3 className="flex items-center text-lg font-semibold text-slate-900">
-              <CheckSquare className="h-5 w-5 mr-2 text-[#2F58CD]" />
+              <CheckSquare className="h-5 w-5 mr-2 text-[#334B3E]" />
               Actionable Checklist
             </h3>
             <span className="bg-slate-100 text-slate-800 text-sm px-2.5 py-0.5 rounded-full border border-slate-200">
@@ -74,7 +74,7 @@ export function ChecklistTab() {
         <div className="px-4 pb-4">
           <div className="w-full bg-slate-200 rounded-full h-2">
             <div
-              className="bg-[#2F58CD] h-2 rounded-full transition-all duration-300"
+              className="bg-[#334B3E] h-2 rounded-full transition-all duration-300"
               style={{ width: `${completionPercentage}%` }}
             ></div>
           </div>
@@ -100,7 +100,7 @@ export function ChecklistTab() {
                       type="checkbox"
                       checked={item.completed}
                       onChange={() => toggleItem(item.id)}
-                      className="mt-1 h-4 w-4 text-[#2F58CD] focus:ring-[#2F58CD] border-slate-300 rounded"
+                      className="mt-1 h-4 w-4 text-[#334B3E] focus:ring-[#334B3E] border-slate-300 rounded"
                     />
                     <div className="flex-1">
                       <p

@@ -63,22 +63,27 @@ def process_document_endpoint():
 
 @app.route('/chat', methods=['POST'])
 def chat_endpoint():
-    """Endpoint to handle chatbot conversations."""
+    """Answer a question using only the indexed chunks for one document."""
     data = request.get_json()
-    if not data or 'question' not in data or 'context' not in data:
-        return jsonify({"error": "Invalid request. 'question' and 'context' are required."}), 400
-
-    question = data['question']
-    context = data['context']
-    user_role = data.get('user_role', 'user') # Get user role, default to 'user'
-
+    if not data or not data.get('question') or not data.get('document_id'):
+        return jsonify({"error": "Invalid request. 'question' and 'document_id' are required."}), 400
     try:
-        answer = chat_with_document(question, context, user_role)
-        return jsonify({"answer": answer})
+        return jsonify(chat_with_document(data['question'], data['document_id'], data.get('user_role', 'user')))
     except Exception as e:
-        logging.error(f"An error occurred during chat processing: {e}", exc_info=True)
+        logging.error(f"An error occurred during RAG chat: {e}", exc_info=True)
         return jsonify({"error": "An error occurred while getting a response from the assistant."}), 500
+
+
+
+@app.route('/internal/purge-expired', methods=['POST'])
+def purge_expired_documents():
+    """Scheduled endpoint; protect with CLEANUP_TOKEN in production."""
+    expected = os.getenv('CLEANUP_TOKEN')
+    if expected and request.headers.get('Authorization') != f'Bearer {expected}':
+        return jsonify({"error": "Unauthorized"}), 401
+    from rag import LegalRAG
+    LegalRAG().purge_expired()
+    return jsonify({"status": "ok"})
 
 if __name__ == '__main__':
     app.run(debug=True)
-

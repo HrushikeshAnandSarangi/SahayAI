@@ -21,13 +21,13 @@ export function AssistantTab() {
   }, [chatHistory]);
 
   const handleSendMessage = async () => {
-    if (!inputValue.trim() || !analysisResult) return
+    if (!inputValue.trim() || !analysisResult?.document_id) return
 
     const userMessage = {
       role: "user" as const,
       parts: [{ text: inputValue }],
     }
-    
+
     dispatch({ type: 'ADD_CHAT_MESSAGE', payload: userMessage });
     setInputValue("")
     setIsLoading(true)
@@ -38,7 +38,7 @@ export function AssistantTab() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           question: inputValue,
-          context: analysisResult.scraped_text,
+          document_id: analysisResult.document_id,
           user_role: userRole,
         }),
       });
@@ -48,10 +48,10 @@ export function AssistantTab() {
       }
 
       const data = await response.json();
-      
+
       // Handle the nested answer structure: data.answer.answer
       let assistantText = "";
-      
+
       if (typeof data === 'string') {
         assistantText = data;
       } else if (data && typeof data === 'object') {
@@ -80,8 +80,9 @@ export function AssistantTab() {
       const assistantMessage = {
         role: "model" as const,
         parts: [{ text: assistantText }],
+        citations: Array.isArray(data?.citations) ? data.citations : [],
       };
-      
+
       dispatch({ type: 'ADD_CHAT_MESSAGE', payload: assistantMessage });
 
     } catch (error) {
@@ -105,7 +106,7 @@ export function AssistantTab() {
 
   const suggestedQuestions = [
     "What are my termination rights?",
-    "Can I negotiate the non-compete clause?", 
+    "Can I negotiate the non-compete clause?",
     "What happens to my intellectual property?",
     "Are there any red flags in this contract?",
   ]
@@ -114,9 +115,9 @@ export function AssistantTab() {
     <div className="flex flex-col h-[calc(100vh-12rem)]">
       <div className="bg-white rounded-lg border border-slate-200 shadow-sm flex-1 flex flex-col">
         {/* Header */}
-        <div className="p-4 border-b border-slate-200 bg-gradient-to-r from-[#2F58CD]/5 to-[#2347B8]/5">
+        <div className="p-4 border-b border-slate-200 bg-gradient-to-r from-[#334B3E]/5 to-[#263B31]/5">
           <h3 className="flex items-center text-lg font-semibold text-slate-900">
-            <div className="w-8 h-8 bg-[#2F58CD] rounded-full flex items-center justify-center mr-3">
+            <div className="w-8 h-8 bg-[#334B3E] rounded-full flex items-center justify-center mr-3">
               <MessageCircle className="h-4 w-4 text-white" />
             </div>
             Legal Assistant
@@ -145,19 +146,29 @@ export function AssistantTab() {
                   className={`flex items-start space-x-3 ${message.role === "user" ? "justify-end" : "justify-start"}`}
                 >
                   {message.role === "model" && (
-                    <div className="w-8 h-8 bg-gradient-to-br from-[#2F58CD] to-[#2347B8] rounded-full flex items-center justify-center flex-shrink-0 shadow-md">
+                    <div className="w-8 h-8 bg-gradient-to-br from-[#334B3E] to-[#263B31] rounded-full flex items-center justify-center flex-shrink-0 shadow-md">
                       <Bot className="h-4 w-4 text-white" />
                     </div>
                   )}
 
                   <div
                     className={`max-w-[75%] p-4 rounded-2xl shadow-sm ${
-                      message.role === "user" 
-                        ? "bg-gradient-to-br from-[#2F58CD] to-[#2347B8] text-white rounded-br-md" 
+                      message.role === "user"
+                        ? "bg-gradient-to-br from-[#334B3E] to-[#263B31] text-white rounded-br-md"
                         : "bg-slate-50 text-slate-900 border border-slate-200 rounded-bl-md"
                     }`}
                   >
                     <p className="text-sm leading-relaxed whitespace-pre-wrap">{messageText}</p>
+                    {message.role === "model" && message.citations && message.citations.length > 0 && (
+                      <div className="mt-3 space-y-2">
+                        {message.citations.map((citation) => (
+                          <div key={`${citation.chunk_id}-${citation.quote}`} className="rounded-md border border-stone-100 bg-white p-2 text-xs text-slate-600">
+                            <span className="font-medium text-[#334B3E]">Page {citation.page_start} Ã‚Â· {citation.section}</span>
+                            <p className="mt-1 italic">Ã¢â‚¬Å“{citation.quote}Ã¢â‚¬Â</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   {message.role === "user" && (
@@ -172,18 +183,18 @@ export function AssistantTab() {
             {/* Loading Animation */}
             {isLoading && (
               <div className="flex items-start space-x-3">
-                <div className="w-8 h-8 bg-gradient-to-br from-[#2F58CD] to-[#2347B8] rounded-full flex items-center justify-center flex-shrink-0 shadow-md">
+                <div className="w-8 h-8 bg-gradient-to-br from-[#334B3E] to-[#263B31] rounded-full flex items-center justify-center flex-shrink-0 shadow-md">
                   <Bot className="h-4 w-4 text-white" />
                 </div>
                 <div className="bg-slate-50 border border-slate-200 p-4 rounded-2xl rounded-bl-md shadow-sm">
                   <div className="flex space-x-1">
-                    <div className="w-2 h-2 bg-[#2F58CD] rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-[#334B3E] rounded-full animate-bounce"></div>
                     <div
-                      className="w-2 h-2 bg-[#2F58CD] rounded-full animate-bounce"
+                      className="w-2 h-2 bg-[#334B3E] rounded-full animate-bounce"
                       style={{ animationDelay: "0.1s" }}
                     ></div>
                     <div
-                      className="w-2 h-2 bg-[#2F58CD] rounded-full animate-bounce"
+                      className="w-2 h-2 bg-[#334B3E] rounded-full animate-bounce"
                       style={{ animationDelay: "0.2s" }}
                     ></div>
                   </div>
@@ -195,8 +206,8 @@ export function AssistantTab() {
             {(!chatHistory || chatHistory.length === 0) && (
               <div className="flex-1 flex items-center justify-center">
                 <div className="text-center max-w-md">
-                  <div className="w-16 h-16 bg-gradient-to-br from-[#2F58CD]/10 to-[#2347B8]/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <MessageCircle className="h-8 w-8 text-[#2F58CD]" />
+                  <div className="w-16 h-16 bg-gradient-to-br from-[#334B3E]/10 to-[#263B31]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <MessageCircle className="h-8 w-8 text-[#334B3E]" />
                   </div>
                   <h3 className="text-lg font-semibold text-slate-900 mb-2">
                     Ready to help!
@@ -217,10 +228,10 @@ export function AssistantTab() {
                 {suggestedQuestions.map((question, index) => (
                   <button
                     key={index}
-                    className="text-left p-3 text-sm bg-white border border-slate-200 rounded-lg hover:border-[#2F58CD] hover:bg-[#2F58CD]/5 transition-all duration-200 group"
+                    className="text-left p-3 text-sm bg-white border border-slate-200 rounded-lg hover:border-[#334B3E] hover:bg-[#334B3E]/5 transition-all duration-200 group"
                     onClick={() => setInputValue(question)}
                   >
-                    <span className="group-hover:text-[#2F58CD]">{question}</span>
+                    <span className="group-hover:text-[#334B3E]">{question}</span>
                   </button>
                 ))}
               </div>
@@ -236,14 +247,14 @@ export function AssistantTab() {
                   onChange={(e) => setInputValue(e.target.value)}
                   onKeyPress={handleKeyPress}
                   placeholder="Ask a question about your document..."
-                  className="w-full px-4 py-3 pr-12 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2F58CD]/20 focus:border-[#2F58CD] transition-all duration-200 text-sm"
+                  className="w-full px-4 py-3 pr-12 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#334B3E]/20 focus:border-[#334B3E] transition-all duration-200 text-sm"
                   disabled={isLoading}
                 />
               </div>
               <button
                 onClick={handleSendMessage}
-                disabled={!inputValue.trim() || isLoading || !analysisResult}
-                className="bg-gradient-to-r from-[#2F58CD] to-[#2347B8] hover:from-[#2347B8] hover:to-[#1e3a8a] disabled:opacity-50 disabled:cursor-not-allowed text-white px-5 py-3 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center min-w-[50px]"
+                disabled={!inputValue.trim() || isLoading || !analysisResult?.document_id}
+                className="bg-gradient-to-r from-[#334B3E] to-[#263B31] hover:from-[#263B31] hover:to-[#1e3a8a] disabled:opacity-50 disabled:cursor-not-allowed text-white px-5 py-3 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center min-w-[50px]"
               >
                 <Send className="h-4 w-4" />
               </button>

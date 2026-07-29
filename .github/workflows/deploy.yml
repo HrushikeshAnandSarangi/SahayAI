@@ -1,0 +1,38 @@
+﻿name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  cloud-build:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_DEPLOYER_SERVICE_ACCOUNT }}
+      - uses: google-github-actions/setup-gcloud@v2
+      - name: Build and publish images
+        run: >-
+          gcloud builds submit --config cloudbuild.yaml
+          --substitutions=_REGION=${{ vars.GCP_REGION }},_REPO_NAME=${{ vars.ARTIFACT_REPOSITORY }}
+          --project=${{ vars.GCP_PROJECT_ID }}
+      - name: Deploy backend
+        run: >-
+          gcloud run deploy ${{ vars.BACKEND_SERVICE }}
+          --image=${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ vars.ARTIFACT_REPOSITORY }}/backend:latest
+          --region=${{ vars.GCP_REGION }} --project=${{ vars.GCP_PROJECT_ID }} --quiet
+      - name: Deploy frontend
+        run: >-
+          gcloud run deploy ${{ vars.FRONTEND_SERVICE }}
+          --image=${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ vars.ARTIFACT_REPOSITORY }}/frontend:latest
+          --region=${{ vars.GCP_REGION }} --project=${{ vars.GCP_PROJECT_ID }} --quiet

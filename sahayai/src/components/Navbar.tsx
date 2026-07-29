@@ -24,17 +24,17 @@ export default function Navbar() {
           <div className="hidden md:flex items-center space-x-8">
             <a href="/"><Button
               variant="ghost"
-              className="text-[#212529] hover:text-[#17A2B8] hover:bg-[#17A2B8]/10 font-medium transition-colors"
+              className="text-[#212529] hover:text-[#8B6B43] hover:bg-[#8B6B43]/10 font-medium transition-colors"
             >
               Home
             </Button></a>
             <a href="/working"><Button
               variant="ghost"
-              className="text-[#212529] hover:text-[#17A2B8] hover:bg-[#17A2B8]/10 font-medium transition-colors"
+              className="text-[#212529] hover:text-[#8B6B43] hover:bg-[#8B6B43]/10 font-medium transition-colors"
             >
               How it Works
             </Button></a>
-            <a href="/dashboard"><Button className="bg-gradient-to-r from-[#2F58CD] to-[#4A90E2] hover:from-[#1E3A8A] hover:to-[#2563EB] text-white font-medium px-6 py-2 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300">
+            <a href="/dashboard"><Button className="bg-gradient-to-r from-[#334B3E] to-[#647A6A] hover:from-[#223129] hover:to-[#4E6456] text-white font-medium px-6 py-2 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300">
               Dashboard
             </Button></a>
           </div>
@@ -53,17 +53,17 @@ export default function Navbar() {
             <div className="px-2 pt-2 pb-3 space-y-1 bg-[#FCFBF8] border-t border-[#343A40]/10">
               <Button
                 variant="ghost"
-                className="w-full justify-start text-[#212529] hover:text-[#17A2B8] hover:bg-[#17A2B8]/10"
+                className="w-full justify-start text-[#212529] hover:text-[#8B6B43] hover:bg-[#8B6B43]/10"
               >
                 Home
               </Button>
               <Button
                 variant="ghost"
-                className="w-full justify-start text-[#212529] hover:text-[#17A2B8] hover:bg-[#17A2B8]/10"
+                className="w-full justify-start text-[#212529] hover:text-[#8B6B43] hover:bg-[#8B6B43]/10"
               >
                 How it Works
               </Button>
-              <Button className="w-full justify-start bg-gradient-to-r from-[#2F58CD] to-[#4A90E2] hover:from-[#1E3A8A] hover:to-[#2563EB] text-white mt-2">
+              <Button className="w-full justify-start bg-gradient-to-r from-[#334B3E] to-[#647A6A] hover:from-[#223129] hover:to-[#4E6456] text-white mt-2">
                 Dashboard
               </Button>
             </div>

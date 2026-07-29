@@ -194,7 +194,7 @@ const SidebarTrigger = React.forwardRef<HTMLButtonElement, React.ComponentProps<
       <button
         ref={ref}
         className={cn(
-          "inline-flex items-center justify-center rounded-md p-2 h-7 w-7 text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500",
+          "inline-flex items-center justify-center rounded-md p-2 h-7 w-7 text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-stone-500",
           className,
         )}
         onClick={(event) => {
@@ -251,8 +251,8 @@ const SidebarMenuButton = React.forwardRef<
     <button
       ref={ref}
       className={cn(
-        "flex w-full items-center gap-2 rounded-md p-2 text-left text-sm transition-colors hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500",
-        isActive && "bg-blue-50 text-blue-700 font-medium",
+        "flex w-full items-center gap-2 rounded-md p-2 text-left text-sm transition-colors hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-stone-500",
+        isActive && "bg-stone-50 text-emerald-800 font-medium",
         className,
       )}
       {...props}

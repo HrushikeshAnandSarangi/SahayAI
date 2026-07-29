@@ -95,7 +95,7 @@ export function KeyDetailsTab() {
               {/* 2. Correctly render the 'term' and 'definition' from the object */}
               {keyDetails.key_terms?.map((item: IKeyTerm, index: number) => (
                 <div key={index} className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-[#2F58CD] rounded-full mt-2 flex-shrink-0"></div>
+                  <div className="w-2 h-2 bg-[#334B3E] rounded-full mt-2 flex-shrink-0"></div>
                   <div>
                     <p className="font-semibold text-slate-800">{item.term}</p>
                     <p className="text-slate-600 text-sm">{item.definition}</p>

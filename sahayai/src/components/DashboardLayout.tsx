@@ -89,7 +89,7 @@ export function DashboardLayout() {
         <Sidebar className="border-r border-slate-200">
           <SidebarHeader className="border-b border-slate-200 p-4">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gradient-to-br from-[#2F58CD] to-[#4A90E2] rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-gradient-to-br from-[#334B3E] to-[#647A6A] rounded-lg flex items-center justify-center">
                 <FileText className="h-4 w-4 text-white" />
               </div>
               <div>
@@ -108,13 +108,13 @@ export function DashboardLayout() {
                     <SidebarMenuButton
                       onClick={() => setActiveTab(tab.id)}
                       className={`w-full justify-start p-3 rounded-lg transition-all ${
-                        activeTab === tab.id ? "bg-[#2F58CD] text-white shadow-md" : "hover:bg-slate-100 text-slate-700"
+                        activeTab === tab.id ? "bg-[#334B3E] text-white shadow-md" : "hover:bg-slate-100 text-slate-700"
                       }`}
                     >
                       <Icon className="h-5 w-5 mr-3" />
                       <div className="text-left">
                         <div className="font-medium">{tab.label}</div>
-                        <div className={`text-xs ${activeTab === tab.id ? "text-blue-100" : "text-slate-500"}`}>
+                        <div className={`text-xs ${activeTab === tab.id ? "text-stone-100" : "text-slate-500"}`}>
                           {tab.description}
                         </div>
                       </div>
@@ -154,7 +154,7 @@ export function DashboardLayout() {
             </div>
           </header>
 
-          <main className="flex-1 p-6 bg-gradient-to-br from-slate-50 to-blue-50">{renderTabContent()}</main>
+          <main className="flex-1 p-6 bg-gradient-to-br from-slate-50 to-stone-50">{renderTabContent()}</main>
         </div>
       </div>
     </SidebarProvider>

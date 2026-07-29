@@ -2,8 +2,14 @@ Flask
 python-dotenv
 google-cloud-vision
 google-generativeai
+google-genai
 langchain
 pymupdf
 Pillow
-gunicorn 
+gunicorn
 flask-cors
+qdrant-client
+fastembed
+sentence-transformers
+pytest
+pytest-mock

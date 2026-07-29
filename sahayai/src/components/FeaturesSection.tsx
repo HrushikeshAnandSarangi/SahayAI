@@ -77,7 +77,7 @@ export default function FeaturesSection() {
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#212529] mb-6 text-balance">
             Powerful Features for
-            <span className="block bg-gradient-to-r from-[#2F58CD] to-[#4A90E2] bg-clip-text text-transparent">
+            <span className="block bg-gradient-to-r from-[#334B3E] to-[#647A6A] bg-clip-text text-transparent">
               Legal Document Analysis
             </span>
           </h2>
@@ -95,8 +95,8 @@ export default function FeaturesSection() {
                 key={feature.id}
                 className={`relative p-6 rounded-2xl cursor-pointer transition-all duration-300 ${
                   activeFeature === feature.id
-                    ? "bg-gradient-to-r from-[#2F58CD]/10 to-[#4A90E2]/10 border-2 border-[#2F58CD]/30"
-                    : "bg-white/50 border-2 border-transparent hover:border-[#17A2B8]/30 hover:bg-[#17A2B8]/5"
+                    ? "bg-gradient-to-r from-[#334B3E]/10 to-[#647A6A]/10 border-2 border-[#334B3E]/30"
+                    : "bg-white/50 border-2 border-transparent hover:border-[#8B6B43]/30 hover:bg-[#8B6B43]/5"
                 }`}
                 onClick={() => setActiveFeature(feature.id)}
                 onMouseEnter={() => setHoveredFeature(feature.id)}
@@ -109,8 +109,8 @@ export default function FeaturesSection() {
                   <div
                     className={`flex-shrink-0 p-3 rounded-xl transition-all duration-300 ${
                       activeFeature === feature.id
-                        ? "bg-gradient-to-br from-[#2F58CD] to-[#4A90E2] shadow-lg"
-                        : "bg-gradient-to-br from-[#17A2B8]/20 to-[#4B8C8C]/20"
+                        ? "bg-gradient-to-br from-[#334B3E] to-[#647A6A] shadow-lg"
+                        : "bg-gradient-to-br from-[#8B6B43]/20 to-[#6F7A68]/20"
                     }`}
                   >
                     {feature.icon}
@@ -118,7 +118,7 @@ export default function FeaturesSection() {
                   <div className="flex-1">
                     <h3
                       className={`text-xl font-semibold mb-2 transition-colors duration-300 ${
-                        activeFeature === feature.id ? "text-[#2F58CD]" : "text-[#212529]"
+                        activeFeature === feature.id ? "text-[#334B3E]" : "text-[#212529]"
                       }`}
                     >
                       {feature.title}
@@ -130,7 +130,7 @@ export default function FeaturesSection() {
                 {/* Active indicator */}
                 {activeFeature === feature.id && (
                   <motion.div
-                    className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-12 bg-gradient-to-b from-[#2F58CD] to-[#4A90E2] rounded-r-full"
+                    className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-12 bg-gradient-to-b from-[#334B3E] to-[#647A6A] rounded-r-full"
                     layoutId="activeIndicator"
                   />
                 )}
@@ -143,7 +143,7 @@ export default function FeaturesSection() {
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeFeature}
-                className="relative h-96 bg-gradient-to-br from-[#2F58CD]/5 to-[#4A90E2]/10 rounded-3xl border border-[#2F58CD]/10 overflow-hidden"
+                className="relative h-96 bg-gradient-to-br from-[#334B3E]/5 to-[#647A6A]/10 rounded-3xl border border-[#334B3E]/10 overflow-hidden"
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
@@ -151,14 +151,14 @@ export default function FeaturesSection() {
               >
                 {/* Dynamic background pattern */}
                 <div className="absolute inset-0">
-                  <div className="absolute top-8 left-8 w-32 h-32 bg-gradient-to-br from-[#2F58CD]/20 to-transparent rounded-full blur-2xl"></div>
-                  <div className="absolute bottom-8 right-8 w-40 h-40 bg-gradient-to-br from-[#17A2B8]/20 to-transparent rounded-full blur-2xl"></div>
+                  <div className="absolute top-8 left-8 w-32 h-32 bg-gradient-to-br from-[#334B3E]/20 to-transparent rounded-full blur-2xl"></div>
+                  <div className="absolute bottom-8 right-8 w-40 h-40 bg-gradient-to-br from-[#8B6B43]/20 to-transparent rounded-full blur-2xl"></div>
                 </div>
 
                 {/* Feature content showcase */}
                 <div className="relative z-10 h-full flex items-center justify-center p-8">
                   <div className="text-center space-y-6">
-                    <div className="w-20 h-20 mx-auto bg-gradient-to-br from-[#2F58CD] to-[#4A90E2] rounded-2xl flex items-center justify-center shadow-xl">
+                    <div className="w-20 h-20 mx-auto bg-gradient-to-br from-[#334B3E] to-[#647A6A] rounded-2xl flex items-center justify-center shadow-xl">
                       {currentFeature.icon}
                     </div>
                     <div>
@@ -166,7 +166,7 @@ export default function FeaturesSection() {
                       <div className="space-y-2">
                         {currentFeature.details.map((detail, index) => (
                           <div key={index} className="flex items-center justify-center text-sm text-[#343A40]">
-                            <div className="w-1.5 h-1.5 bg-[#2F58CD] rounded-full mr-2"></div>
+                            <div className="w-1.5 h-1.5 bg-[#334B3E] rounded-full mr-2"></div>
                             {detail}
                           </div>
                         ))}
@@ -177,7 +177,7 @@ export default function FeaturesSection() {
 
                 {/* Floating elements */}
                 <motion.div
-                  className="absolute top-4 right-4 w-3 h-3 bg-[#17A2B8] rounded-full"
+                  className="absolute top-4 right-4 w-3 h-3 bg-[#8B6B43] rounded-full"
                   animate={{
                     scale: [1, 1.2, 1],
                     opacity: [0.5, 1, 0.5],
@@ -189,7 +189,7 @@ export default function FeaturesSection() {
                   }}
                 />
                 <motion.div
-                  className="absolute bottom-6 left-6 w-2 h-2 bg-[#2F58CD] rounded-full"
+                  className="absolute bottom-6 left-6 w-2 h-2 bg-[#334B3E] rounded-full"
                   animate={{
                     scale: [1, 1.5, 1],
                     opacity: [0.3, 0.8, 0.3],

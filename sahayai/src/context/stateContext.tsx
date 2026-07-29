@@ -30,7 +30,8 @@ export interface IAnalysis {
 }
 
 export interface IAnalysisResult {
-  scraped_text: string;
+  document_id: string;
+  scraped_text?: string;
   key_details: IKeyDetails;
   analysis: IAnalysis;
   actionable_checklist: string[];
@@ -40,6 +41,7 @@ export interface IAnalysisResult {
 export interface IChatMessage {
   role: 'user' | 'model';
   parts: { text: string }[]; // Changed from tuple [{ text: string }] to array
+  citations?: { chunk_id: string; page_start: number; page_end: number; section: string; quote: string }[];
 }
 
 interface AppState {

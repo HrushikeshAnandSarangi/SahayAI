@@ -70,7 +70,7 @@ def ocr_image_with_vision(image_content):
     
     return response.full_text_annotation.text
 
-def extract_text_from_pdf(pdf_content):
+def extract_pages_from_pdf(pdf_content):
     """
     Extract text from PDF including OCR for images within the PDF
     """
@@ -100,7 +100,7 @@ def extract_text_from_pdf(pdf_content):
                 print(f"Could not process image on page {page_num + 1}: {e}")
     
     doc.close()
-    return "\n".join(all_text_parts)
+    return all_text_parts
 
 def analyze_legal_document(document_text, user_role):
     """
@@ -198,30 +198,32 @@ def analyze_legal_document(document_text, user_role):
         }
 
 def process_document_pipeline(file_content, filename, user_role):
-    """
-    Main pipeline to process legal documents
-    """
+    """Extract, index, and summarize one legal document."""
     file_ext = os.path.splitext(filename)[1].lower()
-    
-    extracted_text = ""
     if file_ext == '.pdf':
-        extracted_text = extract_text_from_pdf(file_content)
+        extracted_pages = extract_pages_from_pdf(file_content)
     elif file_ext in ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff']:
-        extracted_text = ocr_image_with_vision(file_content)
+        extracted_pages = [ocr_image_with_vision(file_content)]
     else:
         raise ValueError(f"Unsupported file type: {file_ext}")
 
+    extracted_text = "\n".join(extracted_pages)
     if not extracted_text.strip():
         return {"error": "No text could be extracted from the document."}
 
+    from rag import LegalRAG
+    document_id = LegalRAG().index_pages(extracted_pages, filename)
     insights = analyze_legal_document(extracted_text, user_role)
-    
-    if "error" not in insights and "scraped_text" not in insights:
-        insights["scraped_text"] = extracted_text
-
+    insights["document_id"] = document_id
+    insights.pop("scraped_text", None)
     return insights
 
-def chat_with_document(question, context, user_role):
+
+def chat_with_document(question, document_id, user_role):
+    """Answer only from indexed chunks for this document."""
+    from rag import LegalRAG
+    return LegalRAG().answer(document_id, question, user_role)
+def legacy_chat_with_document(question, context, user_role):
     """
     Chat functionality for asking questions about the document
     """
@@ -252,4 +254,3 @@ def chat_with_document(question, context, user_role):
     
     response = model.generate_content(prompt)
     return {"answer": response.text}
-

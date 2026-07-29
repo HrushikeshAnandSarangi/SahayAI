@@ -33,7 +33,7 @@ export function AnalysisTab() {
       <div className="bg-white rounded-lg border border-slate-200 shadow-sm">
         <div className="p-4">
           <h3 className="text-lg font-semibold text-slate-900 flex items-center">
-            <BookText className="h-5 w-5 mr-2 text-[#2F58CD]" />
+            <BookText className="h-5 w-5 mr-2 text-[#334B3E]" />
             Document Summary
           </h3>
         </div>
@@ -48,7 +48,7 @@ export function AnalysisTab() {
       <div className="bg-white rounded-lg border border-slate-200 shadow-sm">
         <div className="p-4">
           <h3 className="text-lg font-semibold text-slate-900 flex items-center">
-            <Scale className="h-5 w-5 mr-2 text-[#2F58CD]" />
+            <Scale className="h-5 w-5 mr-2 text-[#334B3E]" />
             Clauses Analysis
           </h3>
         </div>
@@ -73,7 +73,7 @@ export function AnalysisTab() {
       <div className="bg-white rounded-lg border border-slate-200 shadow-sm">
         <div className="p-4">
           <h3 className="text-lg font-semibold text-slate-900 flex items-center">
-            <Gavel className="h-5 w-5 mr-2 text-[#2F58CD]" />
+            <Gavel className="h-5 w-5 mr-2 text-[#334B3E]" />
             Legal References
           </h3>
         </div>

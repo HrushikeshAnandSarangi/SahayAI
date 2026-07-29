@@ -25,7 +25,7 @@ export default function DashboardPage() {
   // We check if `state.analysisResult` exists to decide which component to show.
   // This is more robust than checking for a simple ID.
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-stone-50">
       {state.analysisResult ? (
         // Pass the entire analysis result to the layout if needed, or just a part of it.
         // For this example, we assume DashboardLayout can access the context itself
