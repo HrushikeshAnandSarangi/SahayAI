@@ -10,7 +10,7 @@ COLLECTION = os.getenv("QDRANT_COLLECTION", "legal_chunks")
 EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "gemini-embedding-2")
 EMBEDDING_DIMENSIONS = int(os.getenv("EMBEDDING_DIMENSIONS", "1536"))
 RETENTION_HOURS = int(os.getenv("DOCUMENT_RETENTION_HOURS", "24"))
-HEADING = re.compile(r"^(?:(?:section|clause|article)\s+)?(?:\d+(?:\.\d+)*|[A-Z])(?:[.):])?\s+.{2,}$", re.I)
+HEADING = re.compile(r"^(?:(?:section|clause|article)\s+)?(?:\d+(?:\.\d+)*(?:[.):])?|[A-Z][.):])\s+.{2,}$", re.I)
 
 
 def token_count(text):

@@ -218,7 +218,7 @@ It returns `answer`, `citations` (`chunk_id`, page, section, quote), and `insuff
 
 ### Benchmarks
 
-Retrieval quality (Recall@k, MRR, nDCG@k), chunking behavior, and latency are tracked in [benchmarks.md](benchmarks.md), with a runnable harness at `Legal_Mcp/benchmarks/run_benchmark.py`.
+Retrieval quality (Recall@k, MRR, nDCG@k) split by question difficulty, chunking behavior, and latency — measured across 10 documents and 97 questions — are tracked in [benchmarks.md](benchmarks.md). Offline harness: `Legal_Mcp/benchmarks/run_benchmark.py` (no credentials needed). Live-pipeline harness against real Gemini/Qdrant: `Legal_Mcp/benchmarks/run_live_benchmark.py`.
 
 ### Continuous delivery
 

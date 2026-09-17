@@ -16,3 +16,13 @@ def test_long_blocks_are_split_only_on_sentence_boundaries():
     parts = split_long_block(text, limit=800)
     assert len(parts) == 2
     assert all(part.endswith(".") for part in parts)
+
+
+def test_body_sentences_starting_with_a_single_capital_letter_are_not_treated_as_headings():
+    chunks = semantic_chunks([
+        "4. LATE PAYMENT PENALTY\nA missed or delayed instalment attracts a penalty of 2% per month.\n\n5. PREPAYMENT\nBorrower may prepay at any time."
+    ], "loan.pdf")
+    assert len(chunks) == 2
+    assert chunks[0]["section"] == "4. LATE PAYMENT PENALTY"
+    assert "A missed or delayed instalment" in chunks[0]["text"]
+    assert chunks[1]["section"] == "5. PREPAYMENT"

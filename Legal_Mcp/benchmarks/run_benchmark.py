@@ -165,10 +165,32 @@ def benchmark_chunking():
 # Retrieval benchmark
 # ---------------------------------------------------------------------------
 
+def _print_table(rows_by_strategy, strategies, n_questions):
+    header = f"  {'strategy':12s}" + "".join(f"recall@{k:<5d}" for k in K_VALUES) + f"{'mrr':>10s}{'ndcg@5':>10s}{'p50 ms':>10s}"
+    print(header)
+    for name in strategies:
+        m = rows_by_strategy[name]
+        if not m["mrr"]:
+            continue
+        row = f"  {name:12s}"
+        for k in K_VALUES:
+            row += f"{sum(m['recall'][k]) / len(m['recall'][k]):9.2f}  "
+        row += f"{sum(m['mrr']) / len(m['mrr']):10.2f}{sum(m['ndcg5']) / len(m['ndcg5']):10.2f}"
+        latencies = sorted(m["latency_ms"])
+        row += f"{latencies[len(latencies)//2]:10.4f}"
+        print(row)
+    print(f"  n_questions={n_questions}")
+
+
+def _empty_metrics(strategies):
+    return {s: {"recall": {k: [] for k in K_VALUES}, "mrr": [], "ndcg5": [], "latency_ms": []} for s in strategies}
+
+
 def benchmark_retrieval():
     print("== Retrieval (document-scoped, per-question) ==")
     strategies = ("bm25", "tfidf", "hybrid_rrf")
-    metrics = {s: {"recall": {k: [] for k in K_VALUES}, "mrr": [], "ndcg5": [], "latency_ms": []} for s in strategies}
+    overall = _empty_metrics(strategies)
+    by_category = {"lexical": _empty_metrics(strategies), "paraphrase": _empty_metrics(strategies)}
 
     # Pre-chunk every document once, matching production ingestion.
     chunks_by_doc = {name: semantic_chunks(pages, name) for name, pages in DOCUMENTS.items()}
@@ -185,36 +207,37 @@ def benchmark_retrieval():
 
         start = time.perf_counter()
         bm25_ranking = rank(bm25.scores(query_tokens))
-        metrics["bm25"]["latency_ms"].append((time.perf_counter() - start) * 1000)
+        bm25_latency = (time.perf_counter() - start) * 1000
 
         start = time.perf_counter()
         tfidf_ranking = rank([cosine(query_vec, doc) for doc in tfidf_docs])
-        metrics["tfidf"]["latency_ms"].append((time.perf_counter() - start) * 1000)
+        tfidf_latency = (time.perf_counter() - start) * 1000
 
         start = time.perf_counter()
         hybrid_ranking = rrf_fuse([bm25_ranking, tfidf_ranking])
-        metrics["hybrid_rrf"]["latency_ms"].append((time.perf_counter() - start) * 1000)
+        hybrid_latency = (time.perf_counter() - start) * 1000
 
-        for name, ranking in (("bm25", bm25_ranking), ("tfidf", tfidf_ranking), ("hybrid_rrf", hybrid_ranking)):
-            for k in K_VALUES:
-                metrics[name]["recall"][k].append(recall_at_k(ranking, relevant, k))
-            metrics[name]["mrr"].append(reciprocal_rank(ranking, relevant))
-            metrics[name]["ndcg5"].append(ndcg_at_k(ranking, relevant, 5))
+        rankings = {"bm25": (bm25_ranking, bm25_latency), "tfidf": (tfidf_ranking, tfidf_latency), "hybrid_rrf": (hybrid_ranking, hybrid_latency)}
+        for bucket in (overall, by_category[qa["category"]]):
+            for name, (ranking, latency) in rankings.items():
+                for k in K_VALUES:
+                    bucket[name]["recall"][k].append(recall_at_k(ranking, relevant, k))
+                bucket[name]["mrr"].append(reciprocal_rank(ranking, relevant))
+                bucket[name]["ndcg5"].append(ndcg_at_k(ranking, relevant, 5))
+                bucket[name]["latency_ms"].append(latency)
 
-    header = f"  {'strategy':12s}" + "".join(f"recall@{k:<5d}" for k in K_VALUES) + f"{'mrr':>10s}{'ndcg@5':>10s}{'p50 ms':>10s}"
-    print(header)
-    for name in strategies:
-        m = metrics[name]
-        row = f"  {name:12s}"
-        for k in K_VALUES:
-            row += f"{sum(m['recall'][k]) / len(m['recall'][k]):9.2f}  "
-        row += f"{sum(m['mrr']) / len(m['mrr']):10.2f}{sum(m['ndcg5']) / len(m['ndcg5']):10.2f}"
-        latencies = sorted(m["latency_ms"])
-        row += f"{latencies[len(latencies)//2]:10.4f}"
-        print(row)
-    print(f"\n  n_questions={len(QA_PAIRS)} across {len(DOCUMENTS)} documents, top_k={TOP_K}")
+    print("\n-- Overall --")
+    _print_table(overall, strategies, len(QA_PAIRS))
+
+    for category in ("lexical", "paraphrase"):
+        n = sum(1 for qa in QA_PAIRS if qa["category"] == category)
+        print(f"\n-- {category.capitalize()} questions only "
+              f"({'shares vocabulary with the target clause' if category == 'lexical' else 'no shared vocabulary with the target clause'}) --")
+        _print_table(by_category[category], strategies, n)
+
+    print(f"\n  {len(QA_PAIRS)} questions across {len(DOCUMENTS)} documents, top_k={TOP_K}")
     print()
-    return metrics
+    return {"overall": overall, "by_category": by_category}
 
 
 if __name__ == "__main__":
