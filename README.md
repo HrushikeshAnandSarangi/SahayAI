@@ -1,38 +1,38 @@
-# SahayAI 🇮🇳
+# SahayAI
 
 Demystifying complex legal documents with the power of AI. SahayAI transforms dense legal jargon into clear, actionable insights, empowering you to make informed decisions with confidence.
 
-[![Watch Demo](https://img.shields.io/badge/▶️-Watch_Demo-red?style=for-the-badge&logo=youtube)](https://youtu.be/DHpzeMq-yb8) [![Try Live App](https://img.shields.io/badge/🚀-Try_Live_App-blue?style=for-the-badge)](https://sahayai-23401246568.europe-west1.run.app/)
+[![Watch Demo](https://img.shields.io/badge/Watch_Demo-red?style=for-the-badge&logo=youtube)](https://youtu.be/DHpzeMq-yb8) [![Try Live App](https://img.shields.io/badge/Try_Live_App-blue?style=for-the-badge)](https://sahayai-23401246568.europe-west1.run.app/)
 
-## 🌟 About The Project
+## About The Project
 
 Navigating legal documents can be an intimidating and confusing process for anyone without a law degree. The complex language, critical deadlines, and hidden obligations can lead to misunderstandings and costly mistakes.
 
 SahayAI was built to solve this problem. It's an intelligent legal analysis tool that acts as your personal guide. Simply upload a document, and SahayAI instantly breaks it down, providing you with a clear summary, answers to your questions, and a personalized checklist of actions.
 
-## 🎥 Demo
+## Demo
 
 **Watch the full walkthrough:** [SahayAI Demo Video](https://youtu.be/DHpzeMq-yb8)
 
 **Try it yourself:** [Live Application](https://sahayai-23401246568.europe-west1.run.app/)
 
-## ✨ Key Features
+## Key Features
 
 SahayAI offers a multi-faceted analysis through a clean, intuitive interface:
 
-### 📄 Key Details
+### Key Details
 Instantly extracts the most critical information from your document—parties involved, key dates, notice periods, and important terms—and presents it in a simple, structured format.
 
-### 🧠 In-depth Analysis
+### In-depth Analysis
 Delivers plain-English summaries and clear explanations of key clauses, helping you understand the implications of each section without getting lost in jargon.
 
-### ❓ Ask a Question
+### Ask a Question
 An interactive Q&A feature powered by the document's content. Get direct answers to your specific questions, with guided prompts to help you explore the text.
 
-### ✅ Your Personalized Checklist
+### Your Personalized Checklist
 Generates a custom action plan based on the document's content, with categorized tasks and responsibilities so you know exactly what you need to do next.
 
-## 🛠️ Technical Architecture
+## Technical Architecture
 
 SahayAI is implemented as a document-grounded RAG agent: uploaded legal files are parsed, chunked, embedded, indexed, and then queried to generate answers with citations instead of relying on free-form LLM responses.
 
@@ -75,7 +75,7 @@ SahayAI is implemented as a document-grounded RAG agent: uploaded legal files ar
   - API routes (`/api/process`, `/api/chat`) proxy requests to the FastAPI backend
   - Responsive design with modern UI components
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -116,7 +116,7 @@ Ensure you have Docker and Docker Compose installed on your system:
 
 A Google Cloud Build script (`cloudbuild.yaml`) is included to build and push both the frontend and backend images to Google Artifact Registry, preparing them for deployment on services like Cloud Run.
 
-## 📂 Project Structure
+## Project Structure
 
 ```
 .
@@ -137,38 +137,38 @@ A Google Cloud Build script (`cloudbuild.yaml`) is included to build and push bo
 └── README.md
 ```
 
-## 👥 Who It's For
+## Who It's For
 
 SahayAI is designed for a wide range of users who need to navigate the complexities of legal language:
 
-### 🏠 Individuals & Consumers
+### Individuals & Consumers
 Anyone dealing with personal contracts like rental agreements, employment offers, or terms of service who wants to understand their rights and obligations.
 
-### 💼 Business Owners & Entrepreneurs
+### Business Owners & Entrepreneurs
 For quickly reviewing contracts, NDAs, partnership agreements, and other legal documents, especially when they don't have an in-house legal team.
 
-### ⚖️ Legal Professionals
+### Legal Professionals
 Paralegals, law clerks, and even lawyers can use it to get a quick first-pass analysis of documents, saving time and highlighting key areas for deeper review.
 
-### 🎓 Students & Researchers
+### Students & Researchers
 A useful tool for law students or academics who need to analyze and summarize large volumes of legal text.
 
-### 👨‍💻 Developers
+### Developers
 Those looking for a practical, end-to-end example of a modern AI application combining a FastAPI RAG agent backend with a Next.js frontend, ready for containerized deployment.
 
 
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 📞 Contact
+## Contact
 
 For questions or support, please reach out through the GitHub repository issues.
 
 ---
 
-**SahayAI** - Empowering everyone to understand legal documents with AI 🚀
+**SahayAI** - Empowering everyone to understand legal documents with AI
 
 ## Retrieval-Augmented Generation (RAG)
 
@@ -215,6 +215,10 @@ Docker Compose now starts Qdrant automatically. In Cloud Run, deploy Qdrant sepa
 ```
 
 It returns `answer`, `citations` (`chunk_id`, page, section, quote), and `insufficient_evidence`.
+
+### Benchmarks
+
+Retrieval quality (Recall@k, MRR, nDCG@k), chunking behavior, and latency are tracked in [benchmarks.md](benchmarks.md), with a runnable harness at `Legal_Mcp/benchmarks/run_benchmark.py`.
 
 ### Continuous delivery
 

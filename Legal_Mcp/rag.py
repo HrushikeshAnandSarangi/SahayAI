@@ -6,11 +6,6 @@ import re
 import uuid
 from datetime import datetime, timedelta, timezone
 
-from fastembed import SparseTextEmbedding, TextCrossEncoder
-from google import genai
-from google.genai import types
-from qdrant_client import QdrantClient, models
-
 COLLECTION = os.getenv("QDRANT_COLLECTION", "legal_chunks")
 EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "gemini-embedding-2")
 EMBEDDING_DIMENSIONS = int(os.getenv("EMBEDDING_DIMENSIONS", "1536"))
@@ -72,6 +67,15 @@ def semantic_chunks(pages, filename):
 
 class LegalRAG:
     def __init__(self):
+        # Imported lazily so the pure chunking helpers above stay usable
+        # (e.g. in tests and offline benchmarks) without these heavy deps installed.
+        from fastembed import SparseTextEmbedding, TextCrossEncoder
+        from google import genai
+        from google.genai import types
+        from qdrant_client import QdrantClient, models
+
+        self.models = models
+        self.types = types
         self.client = QdrantClient(url=os.getenv("QDRANT_URL", "http://localhost:6333"), api_key=os.getenv("QDRANT_API_KEY"))
         self.genai = genai.Client()
         self.sparse = SparseTextEmbedding(model_name="Qdrant/bm25")
@@ -79,6 +83,7 @@ class LegalRAG:
         self.ensure_collection()
 
     def ensure_collection(self):
+        models = self.models
         if self.client.collection_exists(COLLECTION):
             return
         self.client.create_collection(
@@ -92,15 +97,15 @@ class LegalRAG:
     def dense_embeddings(self, texts, task_type):
         response = self.genai.models.embed_content(
             model=EMBEDDING_MODEL, contents=texts,
-            config=types.EmbedContentConfig(task_type=task_type, output_dimensionality=EMBEDDING_DIMENSIONS),
+            config=self.types.EmbedContentConfig(task_type=task_type, output_dimensionality=EMBEDDING_DIMENSIONS),
         )
         return [embedding.values for embedding in response.embeddings]
 
-    @staticmethod
-    def sparse_vector(vector):
-        return models.SparseVector(indices=vector.indices.tolist(), values=vector.values.tolist())
+    def sparse_vector(self, vector):
+        return self.models.SparseVector(indices=vector.indices.tolist(), values=vector.values.tolist())
 
     def index_pages(self, pages, filename):
+        models = self.models
         document_id = str(uuid.uuid4())
         expires_at = (datetime.now(timezone.utc) + timedelta(hours=RETENTION_HOURS)).isoformat()
         chunks = semantic_chunks(pages, filename)
@@ -116,6 +121,7 @@ class LegalRAG:
         return document_id
 
     def retrieve(self, document_id, question):
+        models = self.models
         dense = self.dense_embeddings([question], "RETRIEVAL_QUERY")[0]
         sparse = next(self.sparse.query_embed(question))
         document_filter = models.Filter(must=[models.FieldCondition(key="document_id", match=models.MatchValue(value=document_id))])
@@ -142,7 +148,7 @@ class LegalRAG:
             return self.no_evidence()
         sources = [{"chunk_id": p.payload["chunk_id"], "page_start": p.payload["page_start"], "page_end": p.payload["page_end"], "section": p.payload["section"], "text": p.payload["text"]} for p in points]
         prompt = f"""You are SahayAI, a helpful legal-document assistant, not a lawyer. Answer only from SOURCES for the {user_role}. Return JSON only with answer, citations, insufficient_evidence. Each citation must use a supplied chunk_id and an exact short quote copied from that source. If evidence is insufficient, use the no-evidence answer.\n\nSOURCES:\n{json.dumps(sources)}\n\nQUESTION: {question}"""
-        response = self.genai.models.generate_content(model=os.getenv("CHAT_MODEL", "gemini-2.5-flash-lite"), contents=prompt, config=types.GenerateContentConfig(response_mime_type="application/json"))
+        response = self.genai.models.generate_content(model=os.getenv("CHAT_MODEL", "gemini-2.5-flash-lite"), contents=prompt, config=self.types.GenerateContentConfig(response_mime_type="application/json"))
         try:
             result = json.loads(response.text)
         except (TypeError, json.JSONDecodeError):
@@ -159,6 +165,7 @@ class LegalRAG:
         return {"answer": result.get("answer", ""), "citations": citations, "insufficient_evidence": False}
 
     def purge_expired(self):
+        models = self.models
         expiration = datetime.now(timezone.utc).isoformat()
         selector = models.FilterSelector(filter=models.Filter(must=[models.FieldCondition(key="expires_at", range=models.DatetimeRange(lt=expiration))]))
         self.client.delete(COLLECTION, selector)
